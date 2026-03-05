@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Organograma PGE - Procuradoria Geral do Estado</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f7fa;
+    --surface: #ffffff;
+    --surface2: #eef2f7;
+    --border: #d0daea;
+    --accent: #1a5bb5;
+    --accent2: #2470d0;
+    --accent3: #1a5bb5;
+    --gold: #d97706;
+    --text: #1a2540;
+    --muted: #6b7a99;
+    --green: #0a7c4e;
+    --purple: #6d28d9;
+    --teal: #0e7a72;
+    --rose: #be123c;
+    --level0: #dbeafe;
+    --level1: #d1fae5;
+    --level2: #ede9fe;
+    --level3: #ffe4e6;
+    --level4: #e0f2fe;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Sora', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(26,91,181,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(26,91,181,0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .header {
+    position: relative;
+    z-index: 10;
+    padding: 32px 40px 24px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, #1a5bb5 0%, #0f3d80 100%);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .header-badge {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    color: white;
+    text-shadow: 0 0 20px rgba(30,111,217,0.5);
+    box-shadow: 0 0 30px rgba(30,111,217,0.3);
+  }
+
+  .header-text h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.3px;
+  }
+
+  .header-text p {
+    font-size: 13px;
+    color: rgba(255,255,255,0.75);
+    margin-top: 3px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .controls {
+    position: relative;
+    z-index: 10;
+    padding: 16px 40px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .filter-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-family: 'Sora', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .filter-btn:hover, .filter-btn.active {
+    border-color: var(--accent);
+    color: var(--accent3);
+    background: rgba(30,111,217,0.1);
+  }
+
+  .search-box {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text);
+    font-family: 'Sora', sans-serif;
+    font-size: 12px;
+    outline: none;
+    min-width: 220px;
+    transition: border-color 0.2s;
+    margin-left: auto;
+  }
+
+  .search-box:focus { border-color: var(--accent); }
+  .search-box::placeholder { color: var(--muted); }
+
+  .main {
+    position: relative;
+    z-index: 5;
+    padding: 32px 40px;
+  }
+
+  /* ROOT NODE */
+  .root-node {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0;
+  }
+
+  .root-card {
+    background: linear-gradient(135deg, #1a5bb5 0%, #0f3d80 100%);
+    border: 2px solid var(--accent);
+    border-radius: 12px;
+    padding: 20px 40px;
+    text-align: center;
+    box-shadow: 0 0 40px rgba(30,111,217,0.3), 0 4px 20px rgba(0,0,0,0.5);
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+  }
+
+  .root-card::after {
+    content: '';
+    position: absolute;
+    bottom: -32px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 32px;
+    background: var(--accent);
+  }
+
+  .root-card:hover {
+    box-shadow: 0 0 60px rgba(30,111,217,0.5), 0 4px 30px rgba(0,0,0,0.6);
+    transform: translateY(-2px);
+  }
+
+  .root-card .sigla {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent3);
+    letter-spacing: 4px;
+  }
+
+  .root-card .nome {
+    font-size: 13px;
+    color: rgba(255,255,255,0.92);
+    margin-top: 4px;
+  }
+
+  /* SECTIONS */
+  .tree-container {
+    margin-top: 32px;
+  }
+
+  .section-group {
+    margin-bottom: 8px;
+  }
+
+  /* NODE STYLES */
+  .node-wrapper {
+    position: relative;
+  }
+
+  .node {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 14px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .node:hover {
+    background: rgba(30,111,217,0.08);
+    border-color: rgba(30,111,217,0.3);
+  }
+
+  .node.highlighted {
+    background: rgba(245,158,11,0.15) !important;
+    border-color: var(--gold) !important;
+  }
+
+  .node-toggle {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: var(--muted);
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+
+  .node.has-children .node-toggle {
+    border-color: var(--accent);
+    color: var(--accent3);
+    background: rgba(30,111,217,0.1);
+  }
+
+  .node.has-children.open .node-toggle {
+    background: var(--accent);
+    color: white;
+  }
+
+  .node-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .node-sigla {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-right: 8px;
+    letter-spacing: 0.5px;
+  }
+
+  .node-name {
+    font-size: 13px;
+    color: #1a2540;
+  }
+
+  .node-meta {
+    font-size: 10px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    margin-top: 2px;
+  }
+
+  .node-sei {
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    color: rgba(100,116,139,0.6);
+    margin-left: auto;
+    flex-shrink: 0;
+    padding-right: 8px;
+  }
+
+  /* DEPTH COLORS */
+  .depth-0 > .node { padding-left: 14px; }
+  .depth-1 > .node { padding-left: 30px; }
+  .depth-2 > .node { padding-left: 50px; }
+  .depth-3 > .node { padding-left: 70px; }
+  .depth-4 > .node { padding-left: 90px; }
+  .depth-5 > .node { padding-left: 110px; }
+
+  /* Category color coding */
+  .cat-gab .node-sigla { background: rgba(245,158,11,0.15); color: var(--gold); }
+  .cat-proc .node-sigla { background: rgba(16,185,129,0.15); color: var(--green); }
+  .cat-sg .node-sigla { background: rgba(139,92,246,0.15); color: var(--purple); }
+  .cat-gabadj .node-sigla { background: rgba(20,184,166,0.15); color: var(--teal); }
+  .cat-other .node-sigla { background: rgba(244,63,94,0.15); color: var(--rose); }
+  .cat-default .node-sigla { background: rgba(30,111,217,0.15); color: var(--accent3); }
+
+  /* Children container */
+  .children {
+    overflow: hidden;
+    transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .children.closed { max-height: 0; }
+  .children.open { max-height: 99999px; }
+
+  /* Connector lines */
+  .depth-1 > .node::before,
+  .depth-2 > .node::before,
+  .depth-3 > .node::before,
+  .depth-4 > .node::before,
+  .depth-5 > .node::before {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    width: 8px;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .depth-1 > .node::before { left: 22px; }
+  .depth-2 > .node::before { left: 42px; }
+  .depth-3 > .node::before { left: 62px; }
+  .depth-4 > .node::before { left: 82px; }
+  .depth-5 > .node::before { left: 102px; }
+
+  /* Section headers */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 14px 10px;
+    cursor: pointer;
+  }
+
+  .section-header-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .section-header-label {
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+  }
+
+  /* Stats bar */
+  .stats {
+    display: flex;
+    gap: 24px;
+    padding: 12px 40px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    z-index: 10;
+  }
+
+  .stat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .stat-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+  }
+
+  .stat-label { font-size: 11px; color: var(--muted); }
+  .stat-value { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text); font-weight: 600; }
+
+  /* Tooltip */
+  .tooltip {
+    position: fixed;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12px;
+    max-width: 300px;
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.15s;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  }
+
+  .tooltip.visible { opacity: 1; }
+  .tooltip-sigla { font-family: 'JetBrains Mono', monospace; color: var(--accent3); font-size: 13px; font-weight: 600; }
+  .tooltip-name { color: var(--text); margin-top: 4px; line-height: 1.4; }
+  .tooltip-reg { color: var(--muted); margin-top: 6px; font-family: 'JetBrains Mono', monospace; font-size: 10px; }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px 40px;
+    border-top: 1px solid var(--border);
+    position: relative;
+    z-index: 10;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .legend-dot {
+    width: 8px; height: 8px;
+    border-radius: 2px;
+  }
+
+  .collapse-all-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-family: 'Sora', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .collapse-all-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent3);
+    background: rgba(30,111,217,0.1);
+  }
+
+  .badge-count {
+    display: inline-block;
+    background: rgba(30,111,217,0.2);
+    color: var(--accent3);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    padding: 1px 5px;
+    border-radius: 10px;
+    margin-left: 4px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge">PGE</div>
+  <div class="header-text">
+    <h1>Procuradoria Geral do Estado de Rondônia</h1>
+    <p>Estrutura Organizacional · Organograma Interativo</p>
+  </div>
+</div>
+
+<div class="stats" id="statsBar">
+  <div class="stat">
+    <div class="stat-dot" style="background: var(--accent)"></div>
+    <span class="stat-label">Total de Unidades</span>
+    <span class="stat-value" id="totalCount">—</span>
+  </div>
+  <div class="stat">
+    <div class="stat-dot" style="background: var(--green)"></div>
+    <span class="stat-label">Procuradorias</span>
+    <span class="stat-value" id="procCount">—</span>
+  </div>
+  <div class="stat">
+    <div class="stat-dot" style="background: var(--purple)"></div>
+    <span class="stat-label">Sec. Geral</span>
+    <span class="stat-value" id="sgCount">—</span>
+  </div>
+  <div class="stat">
+    <div class="stat-dot" style="background: var(--gold)"></div>
+    <span class="stat-label">Gabinetes</span>
+    <span class="stat-value" id="gabCount">—</span>
+  </div>
+</div>
+
+<div class="controls">
+  <button class="filter-btn active" onclick="filterNodes('all', this)">Todos</button>
+  <button class="filter-btn" onclick="filterNodes('proc', this)">Procuradorias</button>
+  <button class="filter-btn" onclick="filterNodes('sg', this)">Secretaria Geral</button>
+  <button class="filter-btn" onclick="filterNodes('gab', this)">Gabinete</button>
+  <button class="collapse-all-btn" onclick="collapseAll()">Recolher tudo</button>
+  <button class="collapse-all-btn" onclick="expandAll()">Expandir tudo</button>
+  <input class="search-box" type="text" placeholder="🔍 Buscar unidade, sigla ou regimento..." oninput="searchNodes(this.value)">
+</div>
+
+<div class="main">
+  <div class="root-node">
+    <div class="root-card">
+      <div class="sigla">PGE</div>
+      <div class="nome">Procuradoria Geral do Estado de Rondônia</div>
+    </div>
+  </div>
+
+  <div class="tree-container" id="tree"></div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div> Gabinete / GAB</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> Procuradorias</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--purple)"></div> Secretaria Geral</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--teal)"></div> Gabinete Adjunto</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--rose)"></div> Outros Órgãos</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--accent3)"></div> Subunidades</div>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+const data = [
+  {
+    sigla: "CSPG", nome: "Conselho Superior da Procuradoria Geral do Estado", reg: "Resolução nº 13", cat: "other", children: []
+  },
+  {
+    sigla: "GAB", nome: "Gabinete", reg: "Lei complementar nº 620", cat: "gab", children: [
+      { sigla: "TCONTAS", nome: "Acompanhamento dos processos dos Tribunais de Contas (TCE e TCU)", reg: "Portaria nº 99", sei: "15930063", cat: "default", children: [] },
+      { sigla: "DERADM", nome: "Assessoria Administrativa", reg: "Portaria nº 565", sei: "30442513", cat: "default", children: [] },
+      { sigla: "ASSEGIN", nome: "Assessoria de Segurança Institucional", reg: "Resolução nº 13", cat: "default", children: [] },
+      { sigla: "ASSESADM", nome: "Assessoria Especial Administrativa", reg: "Portaria nº 136", sei: "16126663", cat: "default", children: [] },
+      { sigla: "ASSESJUD", nome: "Assessoria Especial Judicial", reg: "Lei complementar nº 620", cat: "default", children: [] },
+      { sigla: "ASSESPADAP", nome: "Assessoria Estratégica de Probidade Administrativa e Defesa de Agentes Públicos", reg: "Portaria 687", sei: "67883380", cat: "default", children: [] },
+      { sigla: "DERJUD", nome: "Assessoria Judicial", reg: "Portaria nº 565", sei: "30442513", cat: "default", children: [] },
+      { sigla: "RPV", nome: "Central de Requisição de Pequeno Valor", cat: "default", children: [] },
+      { sigla: "CE", nome: "Centro de Estudos", reg: "Lei complementar nº 620", cat: "default", children: [] },
+      { sigla: "CI", nome: "Controladoria Interna", reg: "Resolução nº 13", cat: "default", children: [] },
+      { sigla: "CRP", nome: "Coordenação de Relações Públicas", reg: "Resolução nº 13", cat: "default", children: [] },
+      { sigla: "CG", nome: "Corregedoria Geral", reg: "Lei complementar nº 620", cat: "default", children: [
+        { sigla: "CPPAD", nome: "Comissão de Processamento de Processo Administrativo Disciplinar", cat: "default", children: [] }
+      ]},
+      { sigla: "DIREX", nome: "Diretoria Executiva", reg: "Resolução nº 13", cat: "default", children: [] },
+      { sigla: "FUMORPGE", nome: "Fundo Especial de Modernização", reg: "Lei 3.537/2015", sei: "0020.082563/2017-26", cat: "default", children: [] },
+      { sigla: "NAT", nome: "Núcleo de Avanços Tecnológicos", reg: "Resolução nº 1/24", sei: "45908253", cat: "default", children: [] },
+      { sigla: "NCR", nome: "Núcleo de Cobranças Residuais", reg: "Portaria nº 69", sei: "46345303", cat: "default", children: [] },
+      { sigla: "NEJI", nome: "Núcleo de Execução Judicial Invertida", reg: "Resolução nº 2", sei: "45908682", cat: "default", children: [] },
+      { sigla: "NLMS", nome: "Núcleo de Litigância de Massa em Saúde", reg: "Portaria nº 836", sei: "20662266", cat: "default", children: [] },
+      { sigla: "OUV", nome: "Ouvidoria", reg: "Resolução nº 13", cat: "default", children: [] },
+      { sigla: "PA", nome: "Procuradoria Administrativa", reg: "Lei complementar nº 620", cat: "proc", children: [] },
+      { sigla: "PAMB", nome: "Procuradoria Ambiental", reg: "Lei complementar nº 620", cat: "proc", children: [
+        { sigla: "PAMBAI", nome: "Procuradoria Ambiental Auto de Infração", reg: "Portaria nº 761", sei: "44621989", cat: "default", children: [] }
+      ]},
+      { sigla: "PDA", nome: "Procuradoria da Dívida Ativa", reg: "Lei complementar nº 620", cat: "proc", children: [] },
+      { sigla: "PAF", nome: "Procuradoria de Ativos Financeiros", reg: "Lei nº 1.106/21", cat: "proc", children: [
+        { sigla: "CIRA", nome: "Comitê Interinstitucional de Recuperação de Ativos no Estado de Rondônia", reg: "Portaria nº 56", sei: "46106050", cat: "default", children: [] },
+        { sigla: "PAFDIR", nome: "Diretoria da Procuradoria de Ativos Financeiros", cat: "default", children: [
+          { sigla: "PAFARQ", nome: "Arquivo e Registro da Procuradoria de Ativos Financeiros", cat: "default", children: [] },
+          { sigla: "PAFPROT", nome: "Protocolo da Procuradoria de Ativos Financeiros", cat: "default", children: [] },
+          { sigla: "PAFPEDIDO", nome: "Setor de Análise Administrativa, Baixa e Correção", cat: "default", children: [] },
+          { sigla: "PAFPROTESTO", nome: "Setor de Encaminhamento e Títulos para Cobrança e Protesto", cat: "default", children: [] },
+          { sigla: "PAFINSC", nome: "Setor de Inscrição em Dívida Ativa", cat: "default", children: [] },
+        ]},
+        { sigla: "PAFGAB1", nome: "Gabinete de Execução Fiscal", cat: "default", children: [] },
+        { sigla: "PAFGAB2", nome: "Gabinete de Execução Fiscal", cat: "default", children: [] },
+        { sigla: "PAFGAB3", nome: "Gabinete de Execução Fiscal", cat: "default", children: [] },
+        { sigla: "NGDA", nome: "Núcleo Gestor de Dívida Ativa", reg: "Resolução n° 8/2024", sei: "54455398", cat: "default", children: [
+          { sigla: "CIF", nome: "Coordenação de Inteligência Fiscal", cat: "default", children: [] }
+        ]},
+      ]},
+      { sigla: "PCC", nome: "Procuradoria de Contratos e Convênios", reg: "Lei complementar nº 620", cat: "proc", children: [] },
+      { sigla: "PCDS", nome: "Procuradoria de Controle dos Direitos do Servidor", reg: "Lei complementar nº 620", cat: "proc", children: [] },
+      { sigla: "PDH", nome: "Procuradoria de Direitos Humanos", reg: "Lei complementar nº 620", cat: "proc", children: [] },
+      { sigla: "PEJ", nome: "Procuradoria de Execução, Cálculos, Perícias e Avaliações", reg: "Lei complementar nº 620", cat: "proc", children: [] },
+      { sigla: "PPI", nome: "Procuradoria de Patrimônio Imobiliário", reg: "Lei complementar nº 620", cat: "proc", children: [] },
+      { sigla: "PTCL", nome: "Procuradoria de Técnica e Controle Legislativo", reg: "Lei complementar nº 620", cat: "proc", children: [] },
+      { sigla: "PC", nome: "Procuradoria do Contencioso", reg: "Lei complementar nº 620", cat: "proc", children: [
+        { sigla: "NUCADIN", nome: "Núcleo de Atuação Judicial Junto à Administração Indireta", reg: "Portaria n° 153", sei: "69624630", cat: "default", children: [] }
+      ]},
+      { sigla: "PF", nome: "Procuradoria Fiscal", reg: "Lei complementar nº 620", cat: "proc", children: [
+        { sigla: "CP", nome: "Compensação Administrativa de Precatórios", cat: "default", children: [] }
+      ]},
+      { sigla: "CASACIVIL", nome: "Procuradoria Geral do Estado junto à Casa Civil", reg: "Portaria nº 41", sei: "23464597", cat: "proc", children: [] },
+      { sigla: "EMATER", nome: "Procuradoria Geral do Estado junto à EMATER", reg: "Portaria nº 41", sei: "23464597", cat: "proc", children: [] },
+      { sigla: "IDEP", nome: "PGE junto ao Instituto Estadual de Desenvolvimento da Educação Profissional", reg: "Portaria nº 41", sei: "23464597", cat: "proc", children: [] },
+      { sigla: "SESAU", nome: "Procuradoria Geral do Estado junto à SESAU", reg: "Portaria nº 41", sei: "23464597", cat: "proc", children: [] },
+      { sigla: "SESDEC", nome: "Procuradoria Geral do Estado junto à SESDEC", reg: "Portaria nº 41", sei: "23464597", cat: "proc", children: [] },
+      { sigla: "IDARON", nome: "PGE junto à Agência de Defesa Sanitária Agrosilvopastoril", reg: "Portaria nº 41", sei: "23464597", cat: "proc", children: [] },
+      { sigla: "DEF", nome: "Procuradoria Geral Junto À Defensoria Pública Do Estado De Rondônia", reg: "Portaria nº 545 / Portaria n° 627", sei: "40924445", cat: "proc", children: [] },
+      { sigla: "JUCER", nome: "PGE junto à Junta Comercial do Estado de Rondônia", reg: "Portaria nº 41", sei: "23464597", cat: "proc", children: [] },
+      { sigla: "DER", nome: "PGE junto ao Departamento Estadual de Estradas de Rodagem e Transporte", reg: "Portaria nº 41", sei: "23464597", cat: "proc", children: [] },
+      { sigla: "DETRAN", nome: "PGE junto ao Departamento Estadual de Trânsito", reg: "Portaria nº 41", sei: "23464597", cat: "proc", children: [] },
+      { sigla: "IPEMRO", nome: "PGE junto ao Instituto de Pesos e Medidas do Estado de Rondônia", reg: "Portaria nº 41", sei: "23464597", cat: "proc", children: [] },
+      { sigla: "IPERON", nome: "PGE junto ao Instituto de Previdência dos Servidores Públicos do Estado de Rondônia", reg: "Portaria nº 41", sei: "23464597", cat: "proc", children: [] },
+      { sigla: "TCE", nome: "PGE junto ao Tribunal de Contas do Estado de Rondônia", reg: "Portaria nº 41", sei: "23464597", cat: "proc", children: [] },
+      { sigla: "TJ", nome: "PGE junto ao Tribunal de Justiça do Estado de Rondônia", reg: "Portaria nº 41", sei: "23464597", cat: "proc", children: [] },
+      { sigla: "SEAGRI", nome: "PGE junto à Secretaria de Estado da Agricultura", reg: "Portaria nº 41", sei: "23464597", cat: "proc", children: [] },
+      { sigla: "SEJUS", nome: "PGE junto à Secretaria de Estado da Justiça", reg: "Portaria nº 41", sei: "23464597", cat: "proc", children: [] },
+      { sigla: "SEPOG", nome: "PGE junto à Secretaria de Estado de Planejamento, Orçamento e Gestão", reg: "Portaria nº 41", sei: "23464597", cat: "proc", children: [] },
+      { sigla: "SEDEC", nome: "PGE junto à Secretaria de Estado do Desenvolvimento Econômico", reg: "Portaria nº 41", sei: "23464597", cat: "proc", children: [] },
+      { sigla: "SEOSP", nome: "PGE junto à Secretaria de Estado de Obras e Serviços Públicos", reg: "Portaria nº 41", sei: "23464597", cat: "proc", children: [] },
+      { sigla: "SUGESP", nome: "PGE junto à Superintendência de Gestão de Gastos Públicos Administrativos", reg: "Portaria nº 41", sei: "23464597", cat: "proc", children: [] },
+      { sigla: "SEGEP", nome: "PGE junto à Superintendência Estadual de Gestão de Pessoas", reg: "Portaria nº 41", sei: "23464597", cat: "proc", children: [] },
+      { sigla: "SPSM", nome: "Procuradoria para o Sistema de Proteção Social dos Militares", reg: "Portaria nº 705", sei: "23464597", cat: "proc", children: [] },
+      { sigla: "PRC", nome: "Procuradoria Regional de Cacoal", reg: "Lei complementar nº 620", cat: "proc", children: [] },
+      { sigla: "PRJP", nome: "Procuradoria Regional de Ji-Paraná", reg: "Lei complementar nº 620", cat: "proc", children: [] },
+      { sigla: "PRV", nome: "Procuradoria Regional de Vilhena", reg: "Lei complementar nº 620", cat: "proc", children: [] },
+      { sigla: "FUPEN", nome: "Procuradoria Setorial da FUPEN", cat: "proc", children: [] },
+      { sigla: "SEAS", nome: "Procuradoria Setorial da SEAS", reg: "Portaria nº 41", sei: "23464597", cat: "proc", children: [] },
+      { sigla: "SEDI", nome: "Procuradoria Setorial da SEDI", cat: "proc", children: [] },
+      { sigla: "SEDUC", nome: "Procuradoria Setorial da SEDUC", reg: "Portaria nº 41", sei: "23464597", cat: "proc", children: [] },
+      { sigla: "SEJUCEL", nome: "Procuradoria Setorial da SEJUCEL", reg: "Portaria nº 41", sei: "23464597", cat: "proc", children: [] },
+      { sigla: "AGERO", nome: "Procuradoria Setorial junto a Agência de Regulação de Serviços Públicos Delegados", reg: "Portaria nº 41", sei: "23464597", cat: "proc", children: [] },
+      { sigla: "AGEVISA", nome: "Procuradoria Setorial junto a Agência Estadual de Vigilância em Saúde de Rondônia", reg: "Portaria nº 389", sei: "28159804", cat: "proc", children: [] },
+      { sigla: "COGES", nome: "Procuradoria Setorial junto a Contabilidade Geral do Estado", reg: "Portaria nº 41", sei: "23464597", cat: "proc", children: [] },
+      { sigla: "CGE", nome: "Procuradoria Setorial junto a Controladoria Geral do Estado", reg: "Portaria nº 41", sei: "23464597", cat: "proc", children: [] },
+      { sigla: "FUNCER", nome: "Procuradoria Setorial junto à Fundação Cultural do Estado de Rondônia", reg: "Portaria n° 683", sei: "67670656", cat: "proc", children: [] },
+      { sigla: "FHEMERON", nome: "Procuradoria Setorial junto à Fundação de Hematologia e Hemoterapia do Estado de Rondônia", reg: "Portaria nº 813", sei: "34058326", cat: "proc", children: [] },
+      { sigla: "FAPERO", nome: "Procuradoria Setorial junto a Fundação Rondônia de Amparo ao Desenvolvimento das Ações Científicas e Tecnológicas", reg: "Portaria nº 813", sei: "34058326", cat: "proc", children: [] },
+      { sigla: "IESPRO", nome: "Procuradoria Setorial junto ao Centro de Educação Técnica e Profissional da Área de Saúde", reg: "Portaria nº 389", sei: "28159804", cat: "proc", children: [] },
+      { sigla: "MP", nome: "Procuradoria Setorial junto ao Ministério Público", reg: "Portaria n° 627", sei: "53970882", cat: "proc", children: [] },
+      { sigla: "SEFIN", nome: "Procuradoria Setorial junto a Secretaria de Estado de Finanças", reg: "Portaria nº 41", sei: "23464597", cat: "proc", children: [] },
+      { sigla: "SEDAM", nome: "Procuradoria Setorial junto à Secretaria de Estado do Desenvolvimento Ambiental", reg: "Portaria n° 683", sei: "67670656", cat: "proc", children: [] },
+      { sigla: "SEPAT", nome: "Procuradoria Setorial junto à Secretaria Estadual de Patrimônio e Regularização Fundiária", reg: "Portaria n° 683", sei: "67670656", cat: "proc", children: [] },
+      { sigla: "SUPEL", nome: "Procuradoria Setorial junto a Superintendência Estadual de Compras e Licitações", reg: "Portaria nº 41", sei: "23464597", cat: "proc", children: [] },
+      { sigla: "SETIC", nome: "Procuradoria Setorial junto a Superintendência Estadual de Tecnologia da Informação e Comunicação", reg: "Portaria n° 683", sei: "67670656", cat: "proc", children: [] },
+      { sigla: "SETUR", nome: "Procuradoria Setorial junto à Superintendência Estadual de Turismo", reg: "Portaria n° 683", sei: "67670656", cat: "proc", children: [] },
+      { sigla: "SI", nome: "Procuradoria Setorial junto a Superintendência Estadual do Indígena", reg: "Portaria 705", sei: "55243701", cat: "proc", children: [] },
+      { sigla: "PT", nome: "Procuradoria Trabalhista", reg: "Lei complementar nº 620", cat: "proc", children: [] },
+      { sigla: "RJB", nome: "Representação Judicial em Brasília", reg: "Lei complementar nº 620", cat: "proc", children: [] },
+      { sigla: "FEASE", nome: "Unidade Setorial da Fundação Estadual de Atendimento Socioeducativo", reg: "Portaria nº 41", sei: "23464597", cat: "proc", children: [] },
+    ]
+  },
+  {
+    sigla: "GABADJ", nome: "Gabinete do Procurador Geral Adjunto", reg: "Lei complementar nº 620", cat: "gabadj", children: [
+      { sigla: "NEF", nome: "Núcleo de Litigância Estratégica em Matéria Fiscal", reg: "Portaria nº 104", sei: "15994329", cat: "default", children: [] }
+    ]
+  },
+  {
+    sigla: "SG", nome: "Secretaria Geral da PGE", reg: "Lei nº 1.106", cat: "sg", children: [
+      { sigla: "DAL", nome: "Diretoria Administrativa e Logística", reg: "Resolução nº 13", cat: "sg", children: [
+        { sigla: "CGCC", nome: "Coordenação de Gestão de Compras e Contratos", reg: "Resolução nº 13", cat: "default", children: [] },
+        { sigla: "CLOG", nome: "Coordenação de Logística", reg: "Resolução nº 13", cat: "default", children: [
+          { sigla: "SUBPA", nome: "Subcoordenação de Patrimônio e Almoxarifado", reg: "Resolução nº 13", cat: "default", children: [] }
+        ]},
+        { sigla: "DD", nome: "Divisão de Diárias", reg: "Ofício 9143", sei: "1993551", cat: "default", children: [] },
+        { sigla: "DSUPFUNDO", nome: "Divisão de Suprimento de Fundo", reg: "Ofício 20491", sei: "4030682", cat: "default", children: [] },
+        { sigla: "DT", nome: "Divisão de Transporte", reg: "Ofício 9143", sei: "1993551", cat: "default", children: [] },
+      ]},
+      { sigla: "DAAP", nome: "Diretoria de Apoio à Atividade Processual", reg: "Resolução nº 13", cat: "sg", children: [
+        { sigla: "CCF", nome: "Coordenação de Contabilidade Finalística", reg: "Resolução nº 13", cat: "default", children: [] },
+        { sigla: "CDIST", nome: "Coordenação de Distribuição Processual", reg: "Resolução nº 13", cat: "default", children: [] },
+        { sigla: "PROT", nome: "Coordenação de Protocolo e Atendimento ao Cidadão", reg: "Resolução nº 13", cat: "default", children: [] },
+      ]},
+      { sigla: "DGP", nome: "Diretoria de Gestão de Pessoas", reg: "Resolução nº 1/24", cat: "sg", children: [
+        { sigla: "CAI", nome: "Coordenação de Aprimoramento Institucional", reg: "Resolução nº 13", cat: "default", children: [] },
+        { sigla: "CGP", nome: "Coordenação de Gestão de Pessoas", reg: "Resolução nº 13", cat: "default", children: [
+          { sigla: "NC", nome: "Núcleo de Cálculo", cat: "default", children: [] }
+        ]},
+        { sigla: "CSBES", nome: "Coordenação de Saúde e Bem-Estar do Servidor", reg: "Resolução nº 1/24", cat: "default", children: [] },
+      ]},
+      { sigla: "DFIN", nome: "Diretoria de Planejamento e Finanças", reg: "Resolução nº 13", cat: "sg", children: [
+        { sigla: "CCI", nome: "Coordenação de Contabilidade Institucional", reg: "Resolução nº 13", cat: "default", children: [] },
+        { sigla: "COF", nome: "Coordenação Financeira", reg: "Resolução nº 13", cat: "default", children: [
+          { sigla: "CONTAB", nome: "Divisão de Contabilidade", reg: "Ofício 20491", sei: "4030682", cat: "default", children: [] }
+        ]},
+        { sigla: "SGPJ", nome: "Subcoordenação de Gestão de Pagamentos Judiciais", reg: "Resolução nº 13", cat: "default", children: [] },
+        { sigla: "ORC", nome: "Subcoordenação de Orçamento", reg: "Resolução nº 13", cat: "default", children: [] },
+      ]},
+      { sigla: "DTI", nome: "Diretoria de Tecnologia da Informação", reg: "Resolução nº 13", cat: "sg", children: [
+        { sigla: "CDEV", nome: "Coordenação de Desenvolvimento", reg: "Resolução nº 13", cat: "default", children: [] },
+        { sigla: "CINFRA", nome: "Coordenação de Redes e Infraestrutura", reg: "Resolução nº 13", cat: "default", children: [
+          { sigla: "USU", nome: "Subcoordenação de Suporte ao Usuário", reg: "Resolução nº 13", cat: "default", children: [] }
+        ]},
+      ]},
+      { sigla: "LGPD", nome: "Lei Geral de Proteção de Dados", reg: "Portaria nº 345", sei: "27700260", cat: "default", children: [] },
+    ]
+  }
+];
+
+let allNodes = [];
+let openState = {};
+
+function countAll(nodes) {
+  let c = 0;
+  for (const n of nodes) {
+    c++;
+    if (n.children) c += countAll(n.children);
+  }
+  return c;
+}
+
+function countCat(nodes, cat) {
+  let c = 0;
+  for (const n of nodes) {
+    if (n.cat === cat || (cat === 'proc' && (n.cat === 'proc' || n.sigla.startsWith('P')))) c++;
+    if (n.children) c += countCat(n.children, cat);
+  }
+  return c;
+}
+
+function renderNode(node, depth, parentId) {
+  const id = (parentId ? parentId + '_' : '') + node.sigla.replace(/\s+/g,'_');
+  const hasChildren = node.children && node.children.length > 0;
+  openState[id] = openState[id] !== undefined ? openState[id] : (depth === 0);
+
+  allNodes.push({ id, sigla: node.sigla, nome: node.nome, reg: node.reg || '', cat: node.cat });
+
+  const catClass = `cat-${node.cat || 'default'}`;
+
+  let toggleHtml = hasChildren
+    ? `<div class="node-toggle">${openState[id] ? '−' : '+'}</div>`
+    : `<div class="node-toggle" style="opacity:0.2;cursor:default">·</div>`;
+
+  let seiHtml = node.sei ? `<span class="node-sei">${node.sei}</span>` : '';
+
+  let groupStyle = node.isGroup ? 'border:1px dashed rgba(30,111,217,0.3);border-radius:6px;margin:4px 0;' : '';
+
+  let html = `
+    <div class="node-wrapper depth-${depth} ${catClass}" id="wrap_${id}" style="${groupStyle}" data-cat="${node.cat}" data-sigla="${node.sigla}" data-nome="${node.nome}">
+      <div class="node ${hasChildren ? 'has-children' : ''} ${openState[id] ? 'open' : ''}" 
+           id="node_${id}"
+           onclick="toggleNode('${id}', ${hasChildren})"
+           onmouseenter="showTooltip(event,'${node.sigla.replace(/'/g,"\\'")}','${node.nome.replace(/'/g,"\\'")}','${(node.reg||'').replace(/'/g,"\\'")}','${(node.sei||'')}')"
+           onmouseleave="hideTooltip()">
+        ${toggleHtml}
+        <div class="node-content">
+          <span class="node-sigla">${node.sigla}</span>
+          <span class="node-name">${node.isGroup ? '<em>' + node.nome + '</em>' : node.nome}</span>
+          ${node.reg ? `<div class="node-meta">${node.reg}${hasChildren ? `<span class="badge-count">${node.children.length}</span>` : ''}</div>` : (hasChildren ? `<div class="node-meta"><span class="badge-count">${node.children.length}</span></div>` : '')}
+        </div>
+        ${seiHtml}
+      </div>`;
+
+  if (hasChildren) {
+    html += `<div class="children ${openState[id] ? 'open' : 'closed'}" id="children_${id}">`;
+    for (const child of node.children) {
+      html += renderNode(child, depth + 1, id);
+    }
+    html += `</div>`;
+  }
+
+  html += `</div>`;
+  return html;
+}
+
+function buildTree() {
+  allNodes = [];
+  let html = '';
+
+  // All top-level nodes at the same depth (direct children of PGE)
+  // Procuradorias now live inside GAB
+  const topLevel = [
+    ...data.filter(d => d.sigla === 'CSPG'),
+    ...data.filter(d => d.sigla === 'GAB'),
+    ...data.filter(d => d.sigla === 'GABADJ'),
+    ...data.filter(d => d.sigla === 'SG'),
+  ];
+
+  for (const node of topLevel) {
+    html += renderNode(node, 0, '');
+  }
+
+  document.getElementById('tree').innerHTML = html;
+
+  // Stats - count nodes by category recursively
+  function countByCat(nodes, cat) {
+    let c = 0;
+    for (const n of nodes) {
+      if (n.cat === cat) c++;
+      if (n.children && n.children.length) c += countByCat(n.children, cat);
+    }
+    return c;
+  }
+  function countAll(nodes) {
+    let c = 0;
+    for (const n of nodes) {
+      c++;
+      if (n.children && n.children.length) c += countAll(n.children);
+    }
+    return c;
+  }
+  document.getElementById('totalCount').textContent = countAll(data);
+  document.getElementById('procCount').textContent = countByCat(data, 'proc');
+  document.getElementById('sgCount').textContent = countByCat(data, 'sg');
+  document.getElementById('gabCount').textContent = countByCat(data, 'gab') + countByCat(data, 'gabadj');
+}
+
+function toggleNode(id, hasChildren) {
+  if (!hasChildren) return;
+  openState[id] = !openState[id];
+  const nodeEl = document.getElementById(`node_${id}`);
+  const childrenEl = document.getElementById(`children_${id}`);
+  const toggle = nodeEl.querySelector('.node-toggle');
+
+  if (openState[id]) {
+    nodeEl.classList.add('open');
+    childrenEl.classList.remove('closed');
+    childrenEl.classList.add('open');
+    toggle.textContent = '−';
+  } else {
+    nodeEl.classList.remove('open');
+    childrenEl.classList.remove('open');
+    childrenEl.classList.add('closed');
+    toggle.textContent = '+';
+  }
+}
+
+function collapseAll() {
+  for (const id in openState) openState[id] = false;
+  buildTree();
+}
+
+function expandAll() {
+  for (const id in openState) openState[id] = true;
+  buildTree();
+}
+
+function filterNodes(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  if (cat === 'all') {
+    document.querySelectorAll('.node-wrapper').forEach(w => w.style.display = '');
+    return;
+  }
+
+  // First hide everything
+  document.querySelectorAll('.node-wrapper').forEach(w => w.style.display = 'none');
+
+  // Show matching nodes + all their descendants + all their ancestors
+  document.querySelectorAll('.node-wrapper').forEach(w => {
+    const nodeCat = w.getAttribute('data-cat');
+    if (nodeCat !== cat) return;
+
+    // Show this node and all its descendants
+    w.style.display = '';
+    w.querySelectorAll('.node-wrapper').forEach(child => child.style.display = '');
+
+    // Expand all children containers inside
+    w.querySelectorAll('.children').forEach(c => {
+      c.classList.remove('closed');
+      c.classList.add('open');
+    });
+
+    // Show all ancestor wrappers and expand their children containers
+    let parent = w.parentElement;
+    while (parent) {
+      if (parent.classList && parent.classList.contains('node-wrapper')) {
+        parent.style.display = '';
+      }
+      if (parent.classList && parent.classList.contains('children')) {
+        parent.classList.remove('closed');
+        parent.classList.add('open');
+      }
+      parent = parent.parentElement;
+    }
+  });
+}
+
+function nodeMatchesQuery(w, q) {
+  const sigla = (w.getAttribute('data-sigla')||'').toLowerCase();
+  const nome = (w.getAttribute('data-nome')||'').toLowerCase();
+  return sigla.includes(q) || nome.includes(q);
+}
+
+function hasMatchingDescendant(w, q) {
+  const children = w.querySelectorAll('.node-wrapper');
+  for (const c of children) {
+    if (nodeMatchesQuery(c, q)) return true;
+  }
+  return false;
+}
+
+function searchNodes(query) {
+  const q = query.toLowerCase().trim();
+
+  // Reset
+  document.querySelectorAll('.node-wrapper').forEach(w => {
+    w.style.display = '';
+    w.querySelector(':scope > .node').classList.remove('highlighted');
+  });
+  document.querySelectorAll('.children').forEach(c => {
+    c.classList.remove('open','closed');
+    c.classList.add('open');
+  });
+
+  if (!q) {
+    // Restore original open state
+    buildTree();
+    return;
+  }
+
+  document.querySelectorAll('.node-wrapper').forEach(w => {
+    const directMatch = nodeMatchesQuery(w, q);
+    const descendantMatch = hasMatchingDescendant(w, q);
+
+    if (directMatch) {
+      w.style.display = '';
+      w.querySelector(':scope > .node').classList.add('highlighted');
+      // Expand children so descendants are visible
+      const childDiv = w.querySelector(':scope > .children');
+      if (childDiv) { childDiv.classList.remove('closed'); childDiv.classList.add('open'); }
+      // Ensure all ancestors are visible and open
+      let parent = w.parentElement;
+      while (parent) {
+        if (parent.classList && parent.classList.contains('node-wrapper')) {
+          parent.style.display = '';
+        }
+        if (parent.classList && parent.classList.contains('children')) {
+          parent.classList.remove('closed');
+          parent.classList.add('open');
+        }
+        parent = parent.parentElement;
+      }
+    } else if (descendantMatch) {
+      w.style.display = '';
+      // Expand so matching children are visible
+      const childDiv = w.querySelector(':scope > .children');
+      if (childDiv) { childDiv.classList.remove('closed'); childDiv.classList.add('open'); }
+    } else {
+      w.style.display = 'none';
+    }
+  });
+}
+
+const tooltip = document.getElementById('tooltip');
+function showTooltip(e, sigla, nome, reg, sei) {
+  tooltip.innerHTML = `<div class="tooltip-sigla">${sigla}</div><div class="tooltip-name">${nome}</div>${reg ? `<div class="tooltip-reg">📋 ${reg}</div>` : ''}${sei ? `<div class="tooltip-reg">🔑 SEI: ${sei}</div>` : ''}`;
+  tooltip.classList.add('visible');
+  moveTooltip(e);
+}
+function hideTooltip() { tooltip.classList.remove('visible'); }
+document.addEventListener('mousemove', moveTooltip);
+function moveTooltip(e) {
+  if (!tooltip.classList.contains('visible')) return;
+  let x = e.clientX + 16, y = e.clientY + 10;
+  if (x + 310 > window.innerWidth) x = e.clientX - 320;
+  if (y + 120 > window.innerHeight) y = e.clientY - 130;
+  tooltip.style.left = x + 'px';
+  tooltip.style.top = y + 'px';
+}
+
+buildTree();
+</script>
+</body>
+</html>
